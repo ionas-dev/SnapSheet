@@ -27,7 +27,7 @@ public struct SnapSheet<Content: View>: View {
     }
     
     public init(
-        _ state: Binding<SnapSheetState>,
+        _ state: Binding<SnapSheetState> = .constant(.small),
         smallHeight: CGFloat = UIScreen.main.bounds.size.height * 0.1,
         middleHeight: CGFloat = UIScreen.main.bounds.size.height * 0.4,
         largeHeight: CGFloat = UIScreen.main.bounds.size.height * 0.78,
@@ -57,13 +57,15 @@ public struct SnapSheet<Content: View>: View {
     }
     
     public var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Capsule()
                 .fill(Color(UIColor.systemGray4))
                 .frame(width: 40, height: 5)
-                .padding(.top, 10.0)
+                .padding(.vertical, 10.0)
             
             content
+            
+            Spacer()
         }
         .frame(width: UIScreen.main.bounds.size.width, height: height, alignment: .bottom)
         .background(
