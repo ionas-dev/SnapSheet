@@ -12,20 +12,63 @@ In the past I've used [Snap](https://github.com/nerdsupremacist/Snap), but wante
 import SwiftUI
 import SnapSheet
 
-struct ContentView: View { 
+struct ContentView: View {
+
+  var body: some View {
+    // The normal (behind the sheet) view content belongs here
+    NormalContent()
+      .overlay(
+        SnapSheet {
+          // The content shown on the sheet belongs here
+        }
+      )
+  }
+}
+```
+
+### Additional functions
+```Swift
+import SwiftUI
+import SnapSheet
+
+struct ContentView: View {
   @State var state: SnapSheetState = .small
 
   var body: some View {
     // The normal (behind the sheet) view content belongs here
     NormalContent()
       .overlay(
-        SnapSheet($state) {
+        SnapSheet($state, smallHeight: 100, middleHeight: 400, largeHeight: 800) {
           // The content shown on the sheet belongs here
-          SheetContent()
         }
+        .ignoresSafeArea()
+        .background(.white)
       )
   }
 }
+```
+
+- **Set snap heights:** Set the snap small, middle and large heights the sheet snaps for
+```Swift 
+init(
+  smallHeight: CGFloat = UIScreen.main.bounds.size.height * 0.1,
+  middleHeight: CGFloat = UIScreen.main.bounds.size.height * 0.4,
+  largeHeight: CGFloat = UIScreen.main.bounds.size.height * 0.78,
+  @ViewBuilder content: () -> Content)
+```
+- **Snap state Binding:** Make the state of the sheet visible and changable from outside
+```Swift 
+init(
+  _ state: Binding<SnapSheetState> = .constant(.small),
+  @ViewBuilder content: () -> Content)
+```
+- **Ignore safe area:** Allows content of snap sheet to overlap the area of the home bar
+```Swift
+func ignoresSafeArea() -> some View
+```
+- **Background color:** Changes the background color of the snap sheet
+```Swift
+func background(_ color: Color) -> some View
 ```
 
 ## Installation
