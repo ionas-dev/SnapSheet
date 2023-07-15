@@ -14,7 +14,9 @@ public struct SnapSheet<Content: View>: View {
     private var middleHeight: CGFloat
     private var largeHeight: CGFloat
     private var content: Content
+    
     private var backgroundColor: Color = Color(UIColor.systemGray6)
+    private var safeArea: CGFloat = UIScreen.bottomSafeArea
         
     private var height: CGFloat {
         switch innerState {
@@ -45,7 +47,8 @@ public struct SnapSheet<Content: View>: View {
         smallHeight: CGFloat = UIScreen.main.bounds.size.height * 0.1,
         middleHeight: CGFloat = UIScreen.main.bounds.size.height * 0.4,
         largeHeight: CGFloat = UIScreen.main.bounds.size.height * 0.78,
-        backgroundColor: Color = .gray,
+        backgroundColor: Color = Color(UIColor.systemGray6),
+        safeArea: CGFloat = UIScreen.bottomSafeArea,
         @ViewBuilder content: () -> Content) {
         self._innerState = State(initialValue: state.wrappedValue)
         self._outerState = state
@@ -54,6 +57,7 @@ public struct SnapSheet<Content: View>: View {
         self.largeHeight = largeHeight
         self.content = content()
         self.backgroundColor = backgroundColor
+        self.safeArea = safeArea
     }
     
     public var body: some View {
@@ -64,10 +68,11 @@ public struct SnapSheet<Content: View>: View {
                 .padding(.vertical, 10.0)
             
             content
-            
+                .frame(maxHeight: height - safeArea, alignment: .top)
+                .clipped()
             Spacer()
         }
-        .frame(width: UIScreen.main.bounds.size.width, height: height, alignment: .bottom)
+        .frame(width: UIScreen.main.bounds.size.width, height: height, alignment: .top)
         .background(
             RoundedCorner(radius: 20, corners: [.topLeft, .topRight])
                 .fill(backgroundColor)
@@ -102,6 +107,12 @@ public struct SnapSheet<Content: View>: View {
     
     public func background(_ color: Color) -> some View {
         return SnapSheet(_outerState, smallHeight: smallHeight, middleHeight: middleHeight, largeHeight: largeHeight, backgroundColor: color) {
+            content
+        }
+    }
+    
+    public func ignoresSafeArea() -> some View {
+        return SnapSheet(_outerState, smallHeight: smallHeight, middleHeight: middleHeight, largeHeight: largeHeight, backgroundColor: backgroundColor, safeArea: 0) {
             content
         }
     }
