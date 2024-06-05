@@ -15,7 +15,7 @@ public struct SnapSheet<Content: View>: View {
     private var largeHeight: CGFloat
     private var content: Content
     
-    private var backgroundColor: Color = Color(UIColor.systemGray6)
+    private var backgroundColor: Color = Color(UIColor.systemBackground)
     private var safeArea: CGFloat = UIScreen.bottomSafeArea
         
     private var height: CGFloat {
@@ -61,23 +61,21 @@ public struct SnapSheet<Content: View>: View {
     }
     
     public var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .top) {
+            content
+                .frame(maxHeight: height - safeArea, alignment: .top)
+
             Capsule()
                 .fill(Color(UIColor.systemGray4))
                 .frame(width: 40, height: 5)
-                .padding(.vertical, 10.0)
-            
-            content
-                .frame(maxHeight: height - safeArea, alignment: .top)
-                .clipped()
-            Spacer()
+                .padding(.top, 5.0)
         }
         .frame(width: UIScreen.main.bounds.size.width, height: height, alignment: .top)
         .background(
-            RoundedCorner(radius: 20, corners: [.topLeft, .topRight])
+            RoundedCorner(radius: 10, corners: [.topLeft, .topRight])
                 .fill(backgroundColor)
                 .edgesIgnoringSafeArea(.bottom)
-                .shadow(radius: 3)
+                .shadow(color: Color.secondary.opacity(0.3), radius: 2)
         )
         .gesture(
             DragGesture()
@@ -106,7 +104,7 @@ public struct SnapSheet<Content: View>: View {
     }
     
     public func background(_ color: Color) -> some View {
-        return SnapSheet(_outerState, smallHeight: smallHeight, middleHeight: middleHeight, largeHeight: largeHeight, backgroundColor: color) {
+        return SnapSheet(_outerState, smallHeight: smallHeight, middleHeight: middleHeight, largeHeight: largeHeight, backgroundColor: color, safeArea: safeArea) {
             content
         }
     }
